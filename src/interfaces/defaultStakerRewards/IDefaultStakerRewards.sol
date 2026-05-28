@@ -127,7 +127,10 @@ interface IDefaultStakerRewards is IStakerRewards {
      * @param network address of the network
      * @return total number of the rewards using the token by the network
      */
-    function rewardsLength(address token, address network) external view returns (uint256);
+    function rewardsLength(
+        address token,
+        address network
+    ) external view returns (uint256);
 
     /**
      * @notice Get a particular reward distribution.
@@ -150,7 +153,11 @@ interface IDefaultStakerRewards is IStakerRewards {
      * @param network address of the network
      * @return first index of the unclaimed rewards
      */
-    function lastUnclaimedReward(address account, address token, address network) external view returns (uint256);
+    function lastUnclaimedReward(
+        address account,
+        address token,
+        address network
+    ) external view returns (uint256);
 
     /**
      * @notice Get a claimable admin fee amount for a particular token.
@@ -167,7 +174,10 @@ interface IDefaultStakerRewards is IStakerRewards {
      * @param token address of the token
      * @dev Only the vault owner can call this function.
      */
-    function claimAdminFee(address recipient, address token) external;
+    function claimAdminFee(
+        address recipient,
+        address token
+    ) external;
 
     /**
      * @notice Set an admin fee.

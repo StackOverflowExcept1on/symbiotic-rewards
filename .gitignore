@@ -24,3 +24,6 @@ lcov.info
 
 node_modules
 package-lock.json
+
+# Soldeer
+dependencies/

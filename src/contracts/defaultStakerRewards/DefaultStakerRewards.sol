@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.25;
+pragma solidity ^0.8.25;
 
 import {IDefaultStakerRewards} from "../../interfaces/defaultStakerRewards/IDefaultStakerRewards.sol";
 import {IStakerRewards} from "../../interfaces/stakerRewards/IStakerRewards.sol";
@@ -12,13 +12,13 @@ import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/acce
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {MulticallUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/MulticallUpgradeable.sol";
-import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Time} from "@openzeppelin/contracts/utils/types/Time.sol";
 
 contract DefaultStakerRewards is
     AccessControlUpgradeable,
-    ReentrancyGuardUpgradeable,
+    ReentrancyGuard,
     MulticallUpgradeable,
     IDefaultStakerRewards
 {
@@ -83,7 +83,10 @@ contract DefaultStakerRewards is
 
     mapping(uint48 timestamp => uint256 amount) private _activeSharesCache;
 
-    constructor(address vaultFactory, address networkMiddlewareService) {
+    constructor(
+        address vaultFactory,
+        address networkMiddlewareService
+    ) {
         _disableInitializers();
 
         VAULT_FACTORY = vaultFactory;
@@ -93,7 +96,10 @@ contract DefaultStakerRewards is
     /**
      * @inheritdoc IDefaultStakerRewards
      */
-    function rewardsLength(address token, address network) external view returns (uint256) {
+    function rewardsLength(
+        address token,
+        address network
+    ) external view returns (uint256) {
         return rewards[token][network].length;
     }
 
@@ -117,9 +123,8 @@ contract DefaultStakerRewards is
         for (uint256 i; i < rewardsToClaim;) {
             RewardDistribution storage reward = rewardsByTokenNetwork[rewardIndex];
 
-            amount += IVault(VAULT).activeSharesOfAt(account, reward.timestamp, new bytes(0)).mulDiv(
-                reward.amount, _activeSharesCache[reward.timestamp]
-            );
+            amount += IVault(VAULT).activeSharesOfAt(account, reward.timestamp, new bytes(0))
+                .mulDiv(reward.amount, _activeSharesCache[reward.timestamp]);
 
             unchecked {
                 ++i;
@@ -148,8 +153,6 @@ contract DefaultStakerRewards is
                 revert MissingRoles();
             }
         }
-
-        __ReentrancyGuard_init();
 
         VAULT = params.vault;
         emit InitVault(params.vault);
@@ -230,7 +233,11 @@ contract DefaultStakerRewards is
     /**
      * @inheritdoc IStakerRewards
      */
-    function claimRewards(address recipient, address token, bytes calldata data) external override nonReentrant {
+    function claimRewards(
+        address recipient,
+        address token,
+        bytes calldata data
+    ) external override nonReentrant {
         // network - a network to claim rewards for
         // maxRewards - the maximum amount of rewards to process
         // activeSharesOfHints - hint indexes to optimize `activeSharesOf()` processing
@@ -261,9 +268,8 @@ contract DefaultStakerRewards is
         for (uint256 i; i < rewardsToClaim;) {
             RewardDistribution storage reward = rewardsByTokenNetwork[rewardIndex];
 
-            amount += IVault(VAULT).activeSharesOfAt(msg.sender, reward.timestamp, activeSharesOfHints[i]).mulDiv(
-                reward.amount, _activeSharesCache[reward.timestamp]
-            );
+            amount += IVault(VAULT).activeSharesOfAt(msg.sender, reward.timestamp, activeSharesOfHints[i])
+                .mulDiv(reward.amount, _activeSharesCache[reward.timestamp]);
 
             unchecked {
                 ++i;
@@ -284,7 +290,10 @@ contract DefaultStakerRewards is
     /**
      * @inheritdoc IDefaultStakerRewards
      */
-    function claimAdminFee(address recipient, address token) external nonReentrant onlyRole(ADMIN_FEE_CLAIM_ROLE) {
+    function claimAdminFee(
+        address recipient,
+        address token
+    ) external nonReentrant onlyRole(ADMIN_FEE_CLAIM_ROLE) {
         uint256 claimableAdminFee_ = claimableAdminFee[token];
         if (claimableAdminFee_ == 0) {
             revert InsufficientAdminFee();

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.25;
+pragma solidity ^0.8.25;
 
 import {DefaultOperatorRewards} from "./DefaultOperatorRewards.sol";
 
-import {IDefaultOperatorRewardsFactory} from
-    "../../interfaces/defaultOperatorRewards/IDefaultOperatorRewardsFactory.sol";
+import {
+    IDefaultOperatorRewardsFactory
+} from "../../interfaces/defaultOperatorRewards/IDefaultOperatorRewardsFactory.sol";
 
 import {Registry} from "@symbioticfi/core/src/contracts/common/Registry.sol";
 

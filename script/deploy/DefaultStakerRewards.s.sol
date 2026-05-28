@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.25;
+pragma solidity ^0.8.25;
 
 import {console2, Script} from "forge-std/Script.sol";
 
@@ -17,15 +17,16 @@ contract DefaultStakerRewardsScript is Script {
     ) external {
         vm.startBroadcast();
 
-        address defaultStakerRewards = SymbioticRewardsConstants.defaultStakerRewardsFactory().create(
-            IDefaultStakerRewards.InitParams({
+        address defaultStakerRewards = SymbioticRewardsConstants.defaultStakerRewardsFactory()
+            .create(
+                IDefaultStakerRewards.InitParams({
                 vault: vault,
                 adminFee: adminFee,
                 defaultAdminRoleHolder: defaultAdminRoleHolder,
                 adminFeeClaimRoleHolder: adminFeeClaimRoleHolder,
                 adminFeeSetRoleHolder: adminFeeSetRoleHolder
             })
-        );
+            );
 
         console2.log("Default Staker Rewards: ", defaultStakerRewards);
 

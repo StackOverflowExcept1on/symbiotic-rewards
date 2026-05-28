@@ -43,7 +43,10 @@ interface IDefaultOperatorRewards {
      * @param token address of the token
      * @return Merkle root of the reward distribution
      */
-    function root(address network, address token) external view returns (bytes32);
+    function root(
+        address network,
+        address token
+    ) external view returns (bytes32);
 
     /**
      * @notice Get an amount of tokens that can be claimed for a particular network.
@@ -51,7 +54,10 @@ interface IDefaultOperatorRewards {
      * @param token address of the token
      * @return amount of tokens that can be claimed
      */
-    function balance(address network, address token) external view returns (uint256);
+    function balance(
+        address network,
+        address token
+    ) external view returns (uint256);
 
     /**
      * @notice Get a claimed amount of rewards for a particular account, network, and token.
@@ -60,7 +66,11 @@ interface IDefaultOperatorRewards {
      * @param account address of the claimer
      * @return claimed amount of tokens
      */
-    function claimed(address network, address token, address account) external view returns (uint256);
+    function claimed(
+        address network,
+        address token,
+        address account
+    ) external view returns (uint256);
 
     /**
      * @notice Distribute rewards by a particular network using a given token by providing a Merkle root.
@@ -69,7 +79,12 @@ interface IDefaultOperatorRewards {
      * @param amount amount of tokens to send to the contract
      * @param root Merkle root of the reward distribution
      */
-    function distributeRewards(address network, address token, uint256 amount, bytes32 root) external;
+    function distributeRewards(
+        address network,
+        address token,
+        uint256 amount,
+        bytes32 root
+    ) external;
 
     /**
      * @notice Claim rewards for a particular network and token by providing a Merkle proof.

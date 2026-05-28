@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.25;
+pragma solidity ^0.8.25;
 
 import {IDefaultOperatorRewards} from "../../interfaces/defaultOperatorRewards/IDefaultOperatorRewards.sol";
 
 import {INetworkMiddlewareService} from "@symbioticfi/core/src/interfaces/service/INetworkMiddlewareService.sol";
 
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract DefaultOperatorRewards is ReentrancyGuardUpgradeable, IDefaultOperatorRewards {
+contract DefaultOperatorRewards is ReentrancyGuard, IDefaultOperatorRewards {
     using SafeERC20 for IERC20;
 
     /**
@@ -35,19 +35,18 @@ contract DefaultOperatorRewards is ReentrancyGuardUpgradeable, IDefaultOperatorR
     constructor(
         address networkMiddlewareService
     ) {
-        _disableInitializers();
-
         NETWORK_MIDDLEWARE_SERVICE = networkMiddlewareService;
-    }
-
-    function initialize() public initializer {
-        __ReentrancyGuard_init();
     }
 
     /**
      * @inheritdoc IDefaultOperatorRewards
      */
-    function distributeRewards(address network, address token, uint256 amount, bytes32 root_) external nonReentrant {
+    function distributeRewards(
+        address network,
+        address token,
+        uint256 amount,
+        bytes32 root_
+    ) external nonReentrant {
         if (INetworkMiddlewareService(NETWORK_MIDDLEWARE_SERVICE).middleware(network) != msg.sender) {
             revert NotNetworkMiddleware();
         }
@@ -84,11 +83,9 @@ contract DefaultOperatorRewards is ReentrancyGuardUpgradeable, IDefaultOperatorR
             revert RootNotSet();
         }
 
-        if (
-            !MerkleProof.verifyCalldata(
+        if (!MerkleProof.verifyCalldata(
                 proof, root_, keccak256(bytes.concat(keccak256(abi.encode(msg.sender, totalClaimable))))
-            )
-        ) {
+            )) {
             revert InvalidProof();
         }
 
